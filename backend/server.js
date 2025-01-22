@@ -1,7 +1,9 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const { chats } = require("./data/data");
 const app = express();
+app.use(cors());
 dotenv.config();
 
 app.get("/", (req, res) => {
@@ -12,7 +14,6 @@ app.get("/api/chat", (req, res) => {
   res.send(chats);
 });
 app.get("/api/chat/:id", (req, res) => {
-  //   console.log(req.params.id);
   const singlechat = chats.find((chat) => chat._id === req.params.id);
   res.send(singlechat);
 });
