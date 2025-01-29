@@ -1,20 +1,45 @@
 import { Stack, Fieldset, Input, Button } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
-
 import React, { useState } from "react";
+import { PasswordInput } from "@/components/ui/password-input";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const [show, setShow] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   return (
     <Stack>
       <Fieldset.Root>
         <Fieldset.Content>
-          <Field label="Email address">
-            <Input name="email" type="email" />
+          <Field
+            label="Email address"
+            invalid={!!errors.email}
+            errorText={errors.email?.message}
+            isRequired
+          >
+            <Input
+              {...register("email", { required: "Email is required" })}
+              type="email"
+              placeholder="Enter your email"
+            />
           </Field>
-          <Field label="Password">
-            <Input name="password" type="password" />
+          <Field
+            label="Password"
+            invalid={!!errors.password}
+            errorText={errors.password?.message}
+          >
+            <PasswordInput
+              {...register("password", { required: "Password is required" })}
+              visible={showPassword}
+              onVisibleChange={setShowPassword}
+            />
           </Field>
         </Fieldset.Content>
       </Fieldset.Root>
