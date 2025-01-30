@@ -5,13 +5,15 @@ import { VStack } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
 import { useState } from "react";
-// import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
+  const [confirmshow, setconfirmShow] = useState(false);
+  const handleClickConfirm = () => setconfirmShow(!confirmshow);
   const toast = useToast();
-  // const history = useHistory();
+  const navigate = useNavigate();
 
   const [name, setName] = useState();
   const [email, setEmail] = useState();
@@ -51,7 +53,7 @@ const Signup = () => {
         },
       };
       const { data } = await axios.post(
-        "/api/user",
+        "http://localhost:5000/api/user",
         {
           name,
           email,
@@ -70,7 +72,7 @@ const Signup = () => {
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setPicLoading(false);
-      history.push("/chats");
+      navigate("/chats");
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -162,17 +164,17 @@ const Signup = () => {
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <FormControl id="password" isRequired>
+      <FormControl id="confirmpassword" isRequired>
         <FormLabel>Confirm Password</FormLabel>
         <InputGroup size="md">
           <Input
-            type={show ? "text" : "password"}
+            type={confirmshow ? "text" : "password"}
             placeholder="Confirm password"
             onChange={(e) => setConfirmpassword(e.target.value)}
           />
           <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? "Hide" : "Show"}
+            <Button h="1.75rem" size="sm" onClick={handleClickConfirm}>
+              {confirmshow ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
         </InputGroup>
