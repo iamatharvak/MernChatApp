@@ -1,7 +1,7 @@
 body {
   min-height: 100vh;
   /* display:flex; */
-  background-image: url(./assets//images/bg.jpg) ;
+  background-image: url(../public//bg.jpg) !important ;
   background-size: cover;
   /* background-position: center */
 }
