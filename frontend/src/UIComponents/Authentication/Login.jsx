@@ -53,14 +53,16 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      setUser(data);
+      // setUser(data);
+      console.log(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
+
       navigate("/chats");
     } catch (error) {
       toast({
         title: "Error Occured!",
-        description: error.response.data.message,
+        description: error,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -111,8 +113,8 @@ const Login = () => {
         colorScheme="red"
         width="100%"
         onClick={() => {
-          setEmail("guest@example.com");
-          setPassword("123456");
+          setEmail("srk@gmail.com");
+          setPassword("Srk123");
         }}
       >
         Get Guest User Credentials
