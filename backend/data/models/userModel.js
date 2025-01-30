@@ -21,12 +21,14 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified) {
-    next();
+  if (!this.isModified("password")) {
+    return next();
   }
 
   const salt = await bycrpt.genSalt(10);
-  this.password = bycrpt.hash(this.password, salt);
+  this.password = await bycrpt.hash(this.password, salt);
+
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
