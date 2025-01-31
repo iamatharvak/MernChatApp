@@ -1,12 +1,28 @@
-import { Box, Button, Tooltip } from "@chakra-ui/react";
+// import { BellIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  Text,
+  MenuItem,
+  MenuDivider,
+  Tooltip,
+  Avatar,
+} from "@chakra-ui/react";
 import React from "react";
+import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { useState } from "react";
+import { ChatState } from "@/Context/ChatProvider";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setloading] = useState(false);
   const [loadingChat, setLoadingChat] = useState();
+
+  const { user } = ChatState();
 
   return (
     <>
@@ -21,9 +37,37 @@ const SideDrawer = () => {
       >
         <Tooltip label="Search Users to Chat" hasArrow placement="bottom-end">
           <Button variant="ghost">
-            <i className="fas fa-search"></i>Search User
+            <i className="fas fa-search"></i>
+            <Text display={{ base: "none", md: "flex" }} px="4">
+              Search User
+            </Text>
           </Button>
         </Tooltip>
+        <Text fontSize="2xl" fontFamily="sans-serif">
+          Talk A Tive
+        </Text>
+        <div>
+          <Menu>
+            <MenuButton padding={1}>
+              <BellIcon fontSize="2xl" m={2} />
+            </MenuButton>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              <Avatar
+                size="sm"
+                cursor="pointer"
+                name={user.name}
+                src={user.pic}
+              />
+            </MenuButton>
+            <MenuList>
+              <ProfileModal>
+                <MenuItem>MyProfile</MenuItem>
+              </ProfileModal>
+              <MenuDivider />
+              <MenuItem>Logout</MenuItem>
+            </MenuList>
+          </Menu>
+        </div>
       </Box>
     </>
   );
