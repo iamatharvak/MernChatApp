@@ -39,13 +39,13 @@ const registerUser = asyncHandler(async (req, res) => {
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Log to check if the email is provided
+  
   console.log("Login Request: ", { email, password });
 
   const user = await User.findOne({ email });
 
   if (user) {
-    // Log to check if the user is found
+    
     console.log("User Found: ", user);
 
     const isMatch = await user.matchPassword(password);
