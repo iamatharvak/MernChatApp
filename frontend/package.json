@@ -8,6 +8,7 @@
     "@chakra-ui/hooks": "^2.4.2",
     "@chakra-ui/icons": "^1.0.13",
     "@chakra-ui/react": "^1.6.2",
+    "@chakra-ui/spinner": "^2.1.0",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "axios": "^1.7.9",
