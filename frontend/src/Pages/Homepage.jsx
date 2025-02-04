@@ -20,7 +20,7 @@ function Homepage() {
     const user = JSON.parse(localStorage.getItem("userInfo"));
 
     if (user) navigate("/chat");
-  }, []);
+  }, [navigate]);
 
   return (
     <Container maxW="xl" centerContent>

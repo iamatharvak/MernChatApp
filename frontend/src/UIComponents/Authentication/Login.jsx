@@ -57,7 +57,6 @@ const Login = () => {
       console.log(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-
       navigate("/chat");
     } catch (error) {
       toast({
