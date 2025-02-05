@@ -17,7 +17,7 @@ const accessChat = asyncHandler(async (req, res) => {
     ],
   })
     .populate("users", "-password")
-    .populate("latestmessage");
+    .populate("latestMessage");
 
   isChat = await User.populate(isChat, {
     path: "latestmessage.sender",
@@ -66,6 +66,7 @@ const fetchChats = asyncHandler(async (req, res) => {
   }
 });
 const createGroupChats = asyncHandler(async (req, res) => {
+  console.log("Request Body:", req.body);
   if (!req.body.users || !req.body.chatName) {
     return res.status(400).send({ message: "Please fill all the Fields" });
   }
@@ -81,7 +82,7 @@ const createGroupChats = asyncHandler(async (req, res) => {
 
   try {
     const groupChat = await Chat.create({
-      chatName: req.body.name,
+      chatName: req.body.chatName,
       users: users,
       isGroupChat: true,
       groupAdmin: req.user,
