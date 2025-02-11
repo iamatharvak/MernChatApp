@@ -20,7 +20,7 @@ const accessChat = asyncHandler(async (req, res) => {
     .populate("latestMessage");
 
   isChat = await User.populate(isChat, {
-    path: "latestmessage.sender",
+    path: "latestMessage.sender",
     select: "name pic email",
   });
 
@@ -129,7 +129,7 @@ const addToGroup = asyncHandler(async (req, res) => {
     },
     { new: true }
   )
-    .populate("users", "-passwords")
+    .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
   if (!added) {
@@ -149,7 +149,7 @@ const removeFromGroup = asyncHandler(async (req, res) => {
     },
     { new: true }
   )
-    .populate("users", "-passwords")
+    .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
   if (!remove) {
