@@ -20,8 +20,9 @@ import { ViewIcon } from "@chakra-ui/icons";
 import { ChatState } from "../../Context/ChatProvider";
 import UserBadgeitem from "../UserAvatar/UserBadgeitem";
 import axios from "axios";
+import UserListItem from "../UserAvatar/UserListItem";
 
-const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
+const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState();
   const [search, setSearch] = useState("");
@@ -96,12 +97,12 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
         config
       );
       setSelectedChat(data);
-      setFetchAgain(!fetchAgain);
       setRenameGroupChat(false);
+      setFetchAgain(!fetchAgain);
     } catch (error) {
       toast({
         title: "Error Occured here!",
-        description: error.response.data.message,
+        description: error,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -128,7 +129,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
         `http://localhost:5000/api/user?search=${search}`,
         config
       );
-      console.log(data);
+      // console.log(data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
