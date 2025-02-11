@@ -25,10 +25,10 @@ const MyChats = ({ fetchAgain }) => {
         `http://localhost:5000/api/chat`,
         config
       );
-      console.log("here", data);
+      // console.log("here", data);
       setChats(data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast({
         title: "Error Occured here!",
         description: error.message,
@@ -42,7 +42,7 @@ const MyChats = ({ fetchAgain }) => {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-    console.log(JSON.parse(localStorage.getItem("userInfo")));
+    // console.log(JSON.parse(localStorage.getItem("userInfo")));
   }, [fetchAgain]);
 
   return (
@@ -104,9 +104,17 @@ const MyChats = ({ fetchAgain }) => {
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
                     : chat.chatName}
-                  {console.log("chatname", chat.chatName)}
-                  {console.log("chat", chat)}
+                  {/* {console.log("chatname", chat.chatName)} */}
+                  {/* {console.log("chat", chat)} */}
                 </Text>
+                {chat.latestMessage && (
+                  <Text fontSize="xs">
+                    <b>{chat.latestMessage.sender.name} : </b>
+                    {chat.latestMessage.content.length > 50
+                      ? chat.latestMessage.content.substring(0, 51) + "..."
+                      : chat.latestMessage.content}
+                  </Text>
+                )}
               </Box>
             ))}
           </Stack>

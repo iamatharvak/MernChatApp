@@ -17,30 +17,30 @@ import { Spinner } from "@chakra-ui/spinner";
 import axios from "axios";
 import "./styles.css";
 import ScrollableChats from "./miscellaneous/ScrollableChats";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: animationData,
-  rendererSettings: {
-    preserveAspectRatio: "xMidYMid slice",
-  },
-};
 
 const ENDPOINT = "http://localhost:5000";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const [messages, setMessages] = useState();
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [newMessage, setNewMessage] = useState();
-  const [socketConnected, setSocketConnected] = useState(true);
+  const [newMessage, setNewMessage] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     ChatState();
@@ -63,6 +63,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setMessages(data);
       setLoading(false);
       socket.emit("join chat", selectedChat._id);
+      // console.log("Joined chat room:", selectedChat._id);
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -95,16 +96,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
-
-        socket.emit("new message", data);
-
-        setMessages([...messages, data]);
+        socket.emit("new message", data); // Emit event
+        setMessages([...messages, data]); // Update UI immediately
+        setNewMessage(""); // Clear input
 
         // setLoading(false);
       } catch (error) {
         toast({
           title: "Error Occurred!",
-          description: "Failed to send the message",
+          description: error,
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -116,7 +116,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   useEffect(() => {
     socket = io(ENDPOINT);
+    socket.onAny((event, ...args) => {
+      // console.log(`Received event: ${event}`, args);
+    });
     socket.emit("setup", user);
+    socket.emit("new message", {
+      sender: user, // Ensure you send the user who sent the message
+      content: newMessage, // The actual message
+      chat: selectedChat, // Ensure `selectedChat` is the correct chat object
+    });
+
+    // console.log("Emitting new message:", messages);
     socket.on("connected", () => setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
@@ -126,40 +136,64 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     fetchMessages();
 
     selectedChatCompare = selectedChat;
-    // eslint-disable-next-line
   }, [selectedChat]);
 
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
-      // console.log(newMessageRecieved);
+      // console.log("New message received:", newMessageRecieved);
+
       if (
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
-        if (
-          !notification.some((notif) => notif._id === newMessageRecieved._id)
-        ) {
+        // Show notification for messages outside the active chat
+        setNotification((prev) => [newMessageRecieved, ...prev]);
+        setFetchAgain((prev) => !prev);
+      } else {
+        // Update messages in the current chat
+        setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
+      }
+    });
+
+    return () => socket.off("message recieved"); // Cleanup
+  }, [selectedChatCompare]);
+
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      // console.log("nrew message", newMessageRecieved);
+      // console.log("hello");
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        if (!notification.includes(newMessageRecieved)) {
           setNotification((prevNotifications) => [
             newMessageRecieved,
             ...prevNotifications,
           ]);
-          
+          setFetchAgain((prev) => !prev);
+
           setFetchAgain(!fetchAgain);
-          setNotification((prevNotifications) => {
-            const updatedNotifications = [newMessageRecieved, ...prevNotifications];
-            localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
-            return updatedNotifications;
-          });
+          // setNotification((prevNotifications) => {
+          //   const updatedNotifications = [
+          //     newMessageRecieved,
+          //     ...prevNotifications,
+          //   ];s
+          //   localStorage.setItem(
+          //     "notifications",
+          //     JSON.stringify(updatedNotifications)
+          //   );
+          //   return updatedNotifications;
+          // });
         }
       } else {
-        setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
+        setMessages([...messages, newMessageRecieved]);
       }
     });
-  }, [notification]);
+  });
   useEffect(() => {
-    console.log("Notification Updated:", notification);
+    // console.log("Notification Updated:", notification);
   }, [notification]);
-  
 
   useEffect(() => {
     const storedNotifications = JSON.parse(
@@ -211,21 +245,24 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
             />
-            {!selectedChat.isGroupChat ? (
-              <>
-                {getSender(user, selectedChat.users)}
-                <ProfileModal user={getSenderFull(user, selectedChat.users)} />
-              </>
-            ) : (
-              <>
-                {selectedChat.chatName.toUpperCase()}
-                <UpdateGroupChatModal
-                  fetchAgain={fetchAgain}
-                  setFetchAgain={setFetchAgain}
-                  fetchMessages={fetchMessages}
-                />
-              </>
-            )}
+            {messages &&
+              (!selectedChat.isGroupChat ? (
+                <>
+                  {getSender(user, selectedChat.users)}
+                  <ProfileModal
+                    user={getSenderFull(user, selectedChat.users)}
+                  />
+                </>
+              ) : (
+                <>
+                  {selectedChat.chatName.toUpperCase()}
+                  <UpdateGroupChatModal
+                    fetchAgain={fetchAgain}
+                    setFetchAgain={setFetchAgain}
+                    fetchMessages={fetchMessages}
+                  />
+                </>
+              ))}
           </Text>
           <Box
             display="flex"
@@ -251,7 +288,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <ScrollableChats messages={messages} />
               </div>
             )}
-            <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+            <FormControl
+              onKeyDown={sendMessage}
+              id="first-name"
+              isRequired
+              mt={3}
+            >
               {istyping ? (
                 <div>
                   <Lottie

@@ -19,10 +19,8 @@ const ChatPage = () => {
         w="100%"
         h="91.5vh"
         p="10px"
-      >
-        {user && (
-          <MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-        )}
+      > 
+        {user && <MyChats fetchAgain={fetchAgain} />}
         {user && (
           <Chatbox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}

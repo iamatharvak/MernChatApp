@@ -53,7 +53,7 @@ const SideDrawer = () => {
     setNotification,
   } = ChatState();
   useEffect(() => {
-    console.log("Notification Updated:", notification);
+    // console.log("Notification Updated:", notification);
   }, [notification]);
 
   const logoutHandler = () => {
@@ -86,7 +86,7 @@ const SideDrawer = () => {
         config
       );
       setloading(false);
-      console.log(data);
+      // console.log(data);
       setSearchResult(data);
     } catch (error) {
       toast({
@@ -116,12 +116,12 @@ const SideDrawer = () => {
         config
       );
       if (!chat.find((c) => c._id === data._id)) setChat([data, ...chat]);
-      console.log(data);
+      // console.log(data);
       setSelectedChat(data);
       setLoadingChat(false);
       onClose();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast({
         title: "Error Fetching the chat",
         description: error.message,
@@ -175,7 +175,7 @@ const SideDrawer = () => {
             </MenuButton>
             <MenuList pl={2}>
               {!notification?.length && "No New Messages"}
-              {console.log(notification)}
+              {/* {console.log(notification)} */}
               {notification?.map((notif) => (
                 <MenuItem
                   key={notif._id}
@@ -190,6 +190,8 @@ const SideDrawer = () => {
                 </MenuItem>
               ))}
             </MenuList>
+          </Menu>
+          <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               <Avatar
                 size="sm"

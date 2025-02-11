@@ -32,7 +32,7 @@ const UserListItem = ({ user, handleFunction }) => {
         <Text fontSize="xs">
           <b>Email : </b>
           {user.email}
-          {console.log("here atharva", user)}
+          {/* {console.log("here atharva", user)} */}
         </Text>
       </Box>
     </Box>

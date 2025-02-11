@@ -54,7 +54,7 @@ const Login = () => {
         position: "bottom",
       });
       setUser(data);
-      console.log(data);
+      // console.log(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
       navigate("/chat");
