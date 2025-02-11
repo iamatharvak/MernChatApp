@@ -4,7 +4,6 @@ const {
   sendMessage,
   allMessages,
 } = require("../controllers/messageControllers");
-// const allMessages = require("../controllers/messageControllers")
 const router = express.Router();
 
 router.route("/").post(protect, sendMessage);

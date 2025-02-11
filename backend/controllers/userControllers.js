@@ -46,7 +46,7 @@ const authUser = asyncHandler(async (req, res) => {
 
   if (user) {
     
-    console.log("User Found: ", user);
+    // console.log("User Found: ", user);
 
     const isMatch = await user.matchPassword(password);
 
