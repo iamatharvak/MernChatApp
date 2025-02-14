@@ -1,12 +1,32 @@
 import {
   Box,
+  Button,
   ButtonSpinner,
   FormControl,
   IconButton,
   Input,
+  InputRightElement,
+  PopoverHeader,
+  PopoverBody,
+  Popover,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
   Text,
+  useDimensions,
+  useDisclosure,
   useToast,
+  HStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  VStack,
 } from "@chakra-ui/react";
+import { FaFile, FaImage, FaPaperclip, FaVideo } from "react-icons/fa";
 import { ChatState } from "../Context/ChatProvider";
 import React, { useEffect, useState } from "react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
@@ -32,6 +52,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const defaultOptions = {
     loop: true,
@@ -305,13 +326,46 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               ) : (
                 <></>
               )}
-              <Input
-                variant="filled"
-                bg=""
-                placeholder="Enter a message..."
-                onChange={typingHandler}
-                value={newMessage}
-              />
+              <>
+                <Input
+                  variant="filled"
+                  bg=""
+                  placeholder="Enter a message..."
+                  onChange={typingHandler}
+                  value={newMessage}
+                />
+                <InputRightElement>
+                  <Popover placement="top-end">
+                    <PopoverTrigger>
+                      <IconButton
+                        aria-label="Open Attachment Modal"
+                        bg=""
+                        icon={<FaPaperclip />}
+                        // onClick={onOpen}
+                      />
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      {/* <PopoverHeader>Select an Option</PopoverHeader> */}
+                      <PopoverBody>
+                        <HStack>
+                          <IconButton icon={<FaFile onClick={onOpen} />} />
+                          <IconButton icon={<FaImage onClick={onOpen} />} />
+                          {/* <IconButton icon={<FaVideo />} /> */}
+                        </HStack>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </InputRightElement>
+              </>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Wil be integrated Soon</ModalHeader>
+                  <ModalCloseButton />
+                </ModalContent>
+              </Modal>
             </FormControl>
           </Box>
         </>
